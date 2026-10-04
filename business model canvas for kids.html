@@ -1,0 +1,774 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Startup Quest English</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Lexend:wght@400;500;700&display=swap">
+<style>
+/* Layout: board-game world. Thick ink borders, hard shadows, sticky notes on the canvas; a 5-level map as home screen. */
+:root{
+  --bg:#D8EEFF; --dot:#B9DCFA; --surface:#FFFFFF; --surface-2:#F1F7FF;
+  --ink:#1A1D3A; --muted:#545B82; --line:#1A1D3A; --shadow:#1A1D3A;
+  --tomato:#FF5B3A; --sun:#FFC83D; --mint:#2CCB86; --sky:#3E95FF;
+  --klant:#FF8A6B; --achter:#7DB8FF; --geld:#5FDDA5;
+  --note-klant:#FFD3C4; --note-achter:#CFE5FF; --note-geld:#C9F5DF; --note-ink:#1A1D3A;
+  --good:#18A86B; --bad:#E2412A;
+  --f-display:"Lilita One","Arial Rounded MT Bold","Trebuchet MS",sans-serif;
+  --f-body:"Lexend","Segoe UI",system-ui,sans-serif;
+  --r:16px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141733; --dot:#1E2247; --surface:#212650; --surface-2:#1A1E42;
+  --ink:#F1F2FF; --muted:#AAB0DA; --line:#0A0C1F; --shadow:#05060F;
+  --klant:#FF7A57; --achter:#5C9EF5; --geld:#3FC98D;
+  --good:#3EDB95; --bad:#FF6B52; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141733; --dot:#1E2247; --surface:#212650; --surface-2:#1A1E42;
+  --ink:#F1F2FF; --muted:#AAB0DA; --line:#0A0C1F; --shadow:#05060F;
+  --klant:#FF7A57; --achter:#5C9EF5; --geld:#3FC98D;
+  --good:#3EDB95; --bad:#FF6B52; color-scheme:dark}
+
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{background:var(--bg);background-image:radial-gradient(var(--dot) 2px,transparent 2.5px);background-size:26px 26px;color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;padding-inline:16px;padding-block:0 48px}
+h1,h2,h3{font-family:var(--f-display);font-weight:400;line-height:1.1;margin:0;text-wrap:balance;letter-spacing:.01em}
+p{margin:0}
+button,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--sky);outline-offset:3px}
+.wrap{max-width:1120px;margin:0 auto}
+
+/* knoppen */
+.btn{display:inline-flex;align-items:center;gap:8px;border:3px solid var(--line);border-radius:14px;background:var(--sun);color:var(--note-ink);font-family:var(--f-display);font-size:1.05rem;letter-spacing:.02em;padding:9px 16px;box-shadow:4px 4px 0 var(--shadow);cursor:pointer;transition:transform .08s,box-shadow .08s}
+.btn:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 var(--shadow)}
+.btn:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--shadow)}
+.btn[disabled]{opacity:.45;cursor:not-allowed;transform:none;box-shadow:4px 4px 0 var(--shadow)}
+.btn.ghost{background:var(--surface);color:var(--ink)}
+.btn.red{background:var(--tomato);color:#fff}
+.btn.green{background:var(--mint)}
+.btn.sm{font-size:.92rem;padding:6px 12px;box-shadow:3px 3px 0 var(--shadow)}
+
+/* topbalk */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;max-width:1120px;margin:12px auto 24px;padding:10px 14px;background:var(--surface);border:3px solid var(--line);border-radius:20px;box-shadow:5px 5px 0 var(--shadow)}
+.logo{border:0;background:none;cursor:pointer;font-family:var(--f-display);font-size:1.55rem;padding:0;color:var(--ink);display:flex;align-items:center;gap:8px}
+.logo .mark{width:34px;height:34px;border-radius:10px;background:var(--tomato);border:3px solid var(--line);display:grid;place-items:center;transform:rotate(-6deg)}
+.logo .mark svg{width:18px;height:18px;stroke:#fff}
+.logo span.q{color:var(--tomato)}
+.xp{display:flex;align-items:center;gap:10px;min-width:0;flex:1 1 260px;justify-content:flex-end}
+.rank{font-family:var(--f-display);font-size:1rem;background:var(--sky);color:#fff;border:3px solid var(--line);border-radius:999px;padding:3px 12px;white-space:nowrap}
+.bar{flex:1;max-width:240px;height:18px;border:3px solid var(--line);border-radius:999px;background:var(--surface-2);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:repeating-linear-gradient(-45deg,var(--sun) 0 10px,#FFB01F 10px 20px);transition:width .5s cubic-bezier(.3,1.5,.6,1)}
+.lang{font-family:var(--f-display);font-size:.95rem;text-decoration:none;color:var(--ink);background:var(--surface-2);border:3px solid var(--line);border-radius:10px;padding:3px 10px;letter-spacing:.04em}
+.lang:hover{background:var(--sun);color:var(--note-ink)}
+.xpnum{font-family:var(--f-display);font-variant-numeric:tabular-nums;white-space:nowrap;font-size:1rem}
+
+/* startscherm */
+.hero{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:24px;align-items:center;margin-bottom:34px}
+.eyebrow{text-transform:uppercase;letter-spacing:.12em;font-size:.78rem;font-weight:700;color:var(--muted);margin-bottom:8px}
+.hero h1{font-size:clamp(2.2rem,5.5vw,3.8rem)}
+.hero h1 em{font-style:normal;color:var(--tomato);display:inline-block;transform:rotate(-2deg)}
+.hero p.lead{margin-top:14px;font-size:1.08rem;max-width:52ch;color:var(--muted)}
+.ticket{background:var(--surface);border:3px solid var(--line);border-radius:22px;box-shadow:6px 6px 0 var(--shadow);padding:20px;transform:rotate(1.5deg)}
+.ticket h3{font-size:1.5rem}
+.ticket .big{font-family:var(--f-display);font-size:3rem;line-height:1;color:var(--tomato);font-variant-numeric:tabular-nums}
+.ticket .row{display:flex;justify-content:space-between;align-items:end;gap:12px;margin-top:10px}
+.ticket small{color:var(--muted)}
+.ranks{display:flex;gap:6px;margin-top:14px;flex-wrap:wrap}
+.ranks span{font-size:.75rem;font-weight:700;border:2px solid var(--line);border-radius:999px;padding:2px 9px;background:var(--surface-2);color:var(--muted)}
+.ranks span.on{background:var(--sun);color:var(--note-ink)}
+
+.map{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:18px;position:relative}
+.map::before{content:"";position:absolute;left:8%;right:8%;top:58px;border-top:5px dashed var(--line);opacity:.35;z-index:0}
+.map li{position:relative;z-index:1}
+.map li:nth-child(even){margin-top:46px}
+.node{width:100%;text-align:left;cursor:pointer;background:var(--surface);border:3px solid var(--line);border-radius:22px;box-shadow:5px 5px 0 var(--shadow);padding:16px;display:flex;flex-direction:column;gap:10px;transition:transform .12s}
+.node:hover{transform:translateY(-4px) rotate(-1deg)}
+.node .disc{width:64px;height:64px;border-radius:50%;border:3px solid var(--line);display:grid;place-items:center;background:var(--c,var(--sun));position:relative}
+.node .disc svg{width:30px;height:30px;stroke:var(--note-ink)}
+.node .num{position:absolute;top:-8px;right:-10px;background:var(--surface);border:3px solid var(--line);border-radius:50%;width:28px;height:28px;display:grid;place-items:center;font-family:var(--f-display);font-size:.95rem}
+.node h3{font-size:1.3rem}
+.node p{font-size:.9rem;color:var(--muted)}
+.pill{align-self:flex-start;font-size:.78rem;font-weight:700;border:2px solid var(--line);border-radius:999px;padding:2px 10px;background:var(--surface-2);font-variant-numeric:tabular-nums}
+.pill.done{background:var(--mint);color:var(--note-ink)}
+
+/* levelpagina */
+.lvhead{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+.lvhead .disc{width:58px;height:58px;border-radius:50%;border:3px solid var(--line);display:grid;place-items:center;background:var(--c);flex:none}
+.lvhead .disc svg{width:28px;height:28px;stroke:var(--note-ink)}
+.lvhead h1{font-size:clamp(1.8rem,4vw,2.6rem)}
+.lvhead .eyebrow{margin:0 0 2px}
+.lvhead .grow{flex:1;min-width:0}
+.intro{background:var(--surface);border:3px solid var(--line);border-radius:var(--r);padding:14px 16px;margin-bottom:18px;box-shadow:4px 4px 0 var(--shadow);max-width:780px}
+.intro b{font-family:var(--f-display);font-weight:400;letter-spacing:.02em}
+
+.chips{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.chip{border:3px solid var(--line);border-radius:999px;background:var(--surface);padding:6px 14px;font-weight:700;cursor:pointer;display:inline-flex;gap:8px;align-items:center}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.chip .ok{width:18px;height:18px;border-radius:50%;background:var(--mint);border:2px solid var(--line);display:grid;place-items:center}
+.chip .ok svg{width:10px;height:10px;stroke:var(--note-ink)}
+
+/* het canvas */
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.82rem;font-weight:700;margin-bottom:10px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:14px;height:14px;border-radius:4px;border:2px solid var(--line)}
+.bmc{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));grid-template-areas:"pa pa ac ac wa wa re re kl kl" "pa pa mi mi wa wa ka ka kl kl" "ko ko ko ko ko in in in in in";gap:10px}
+.blk{grid-area:var(--a);background:var(--surface);border:3px solid var(--line);border-radius:var(--r);min-height:150px;display:flex;flex-direction:column;overflow:hidden;cursor:pointer;text-align:left;padding:0;box-shadow:3px 3px 0 var(--shadow);transition:transform .1s,box-shadow .1s}
+.blk:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--shadow)}
+.blk.target{outline:4px dashed var(--tomato);outline-offset:2px}
+.blk.shake{animation:shake .4s}
+.blk.pop{animation:pop .45s}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+@keyframes pop{40%{transform:scale(1.05)}}
+.blk .hd{background:var(--g);color:var(--note-ink);padding:6px 10px;border-bottom:3px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:6px}
+.blk .hd b{font-family:var(--f-display);font-weight:400;font-size:1.02rem;letter-spacing:.02em}
+.blk .hd .cnt{font-size:.72rem;font-weight:700;background:var(--surface);color:var(--ink);border:2px solid var(--line);border-radius:999px;padding:0 7px;font-variant-numeric:tabular-nums}
+.blk .bd{padding:8px 10px;display:flex;flex-direction:column;gap:7px;flex:1;min-width:0}
+.blk .qq{font-size:.82rem;color:var(--muted);font-weight:500}
+.blk .add{margin-top:auto;font-size:.8rem;font-weight:700;color:var(--muted)}
+.blk[data-g="klant"]{--g:var(--klant);--n:var(--note-klant)}
+.blk[data-g="achter"]{--g:var(--achter);--n:var(--note-achter)}
+.blk[data-g="geld"]{--g:var(--geld);--n:var(--note-geld)}
+.blk[data-g="geld"]{min-height:110px}
+.note{background:var(--n);color:var(--note-ink);border:2px solid var(--line);border-radius:6px;padding:5px 8px;font-size:.84rem;line-height:1.35;box-shadow:2px 2px 0 var(--shadow);transform:rotate(var(--rot,-1deg));overflow-wrap:anywhere}
+.note:nth-child(3n){--rot:1.2deg}.note:nth-child(3n+1){--rot:-.6deg}
+.blk[data-g="geld"] .bd{flex-direction:row;flex-wrap:wrap;align-content:flex-start}
+.blk[data-g="geld"] .qq,.blk[data-g="geld"] .add{flex-basis:100%}
+
+/* level 1: kaartjes */
+.tray{margin-top:18px;background:var(--surface);border:3px solid var(--line);border-radius:var(--r);padding:14px;box-shadow:4px 4px 0 var(--shadow)}
+.tray h3{font-size:1.15rem;margin-bottom:10px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px}
+.card{border:3px solid var(--line);border-radius:12px;background:var(--surface-2);padding:10px 12px;text-align:left;cursor:pointer;font-size:.9rem;box-shadow:3px 3px 0 var(--shadow);transition:transform .1s}
+.card:hover{transform:rotate(-1.5deg)}
+.card[aria-pressed="true"]{background:var(--sun);color:var(--note-ink);transform:translateY(-4px) rotate(-2deg);box-shadow:5px 7px 0 var(--shadow)}
+.feedback{margin-top:12px;min-height:1.6em;font-weight:500}
+.feedback.bad{color:var(--bad)}.feedback.good{color:var(--good)}
+.win{margin-top:18px;background:var(--mint);color:var(--note-ink);border:3px solid var(--line);border-radius:var(--r);padding:16px;box-shadow:4px 4px 0 var(--shadow);display:flex;gap:14px;align-items:center;flex-wrap:wrap;justify-content:space-between}
+.win h3{font-size:1.4rem}
+
+/* level 2 */
+.banner{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--sun);color:var(--note-ink);border:3px solid var(--line);border-radius:var(--r);padding:12px 16px;margin-bottom:16px;box-shadow:4px 4px 0 var(--shadow)}
+.banner p{flex:1 1 300px}
+.namebox{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.namebox label{font-family:var(--f-display);font-size:1.1rem}
+.field{border:3px solid var(--line);border-radius:12px;background:var(--surface);padding:9px 12px;min-width:0;width:100%}
+.namebox .field{flex:1 1 260px;width:auto;font-weight:700;font-size:1.05rem}
+.meter{margin-top:22px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) minmax(0,1.2fr);gap:12px;align-items:end;background:var(--surface);border:3px solid var(--line);border-radius:var(--r);padding:16px;box-shadow:4px 4px 0 var(--shadow)}
+.meter h3{grid-column:1/-1;font-size:1.3rem}
+.meter label{display:flex;flex-direction:column;gap:4px;font-size:.85rem;font-weight:700;color:var(--muted)}
+.meter .out{border:3px solid var(--line);border-radius:12px;padding:8px 12px;background:var(--geld);color:var(--note-ink)}
+.meter .out.neg{background:var(--tomato);color:#fff}
+.meter .out b{font-family:var(--f-display);font-weight:400;font-size:1.7rem;font-variant-numeric:tabular-nums;display:block;line-height:1.1}
+.meter .out small{font-size:.8rem;font-weight:500}
+
+/* modal */
+.overlay{position:fixed;inset:0;z-index:50;background:rgba(10,12,30,.55);display:grid;place-items:center;padding:16px}
+.sheet{width:min(560px,100%);max-height:calc(100% - 20px);overflow:auto;background:var(--surface);border:3px solid var(--line);border-radius:22px;box-shadow:7px 7px 0 var(--shadow);animation:rise .25s cubic-bezier(.3,1.4,.6,1)}
+@keyframes rise{from{transform:translateY(30px) scale(.97);opacity:.4}}
+.sheet .sh{background:var(--g);color:var(--note-ink);padding:14px 18px;border-bottom:3px solid var(--line);display:flex;justify-content:space-between;gap:12px;align-items:start}
+.sheet .sh h2{font-size:1.8rem}
+.sheet .sh .q{font-weight:700}
+.sheet .tag{font-size:.7rem;text-transform:uppercase;letter-spacing:.12em;font-weight:700}
+.x{border:3px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;width:38px;height:38px;cursor:pointer;font-size:1.2rem;line-height:1;flex:none}
+.sb{padding:16px 18px;display:flex;flex-direction:column;gap:14px}
+.tip{background:var(--surface-2);border:2px dashed var(--line);border-radius:12px;padding:10px 12px;font-size:.92rem}
+.tip b{font-family:var(--f-display);font-weight:400;letter-spacing:.03em;margin-right:4px}
+.elist{display:flex;flex-direction:column;gap:8px}
+.elist .note{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:.92rem;--rot:0deg}
+.elist .note button{border:2px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;cursor:pointer;width:28px;height:28px;flex:none}
+.empty{color:var(--muted);font-size:.9rem}
+.addform{display:flex;gap:8px}
+.addform .field{flex:1}
+.snav{display:flex;justify-content:space-between;gap:10px;padding:0 18px 18px;flex-wrap:wrap}
+
+/* level 3 */
+.missions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.mis{background:var(--surface);border:3px solid var(--line);border-radius:var(--r);padding:16px;box-shadow:4px 4px 0 var(--shadow);display:flex;flex-direction:column;gap:10px;min-width:0;position:relative}
+.mis.done{background:var(--surface-2)}
+.mis h3{font-size:1.25rem;padding-right:90px}
+.mis p{font-size:.92rem;color:var(--muted)}
+.stamp{position:absolute;top:12px;right:12px;font-family:var(--f-display);font-size:.9rem;border:3px solid var(--good);color:var(--good);border-radius:10px;padding:1px 9px;transform:rotate(8deg);letter-spacing:.04em}
+.tally{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.tally .t{font-family:var(--f-display);font-size:1.6rem;min-width:2ch;text-align:center;font-variant-numeric:tabular-nums}
+.hint{font-size:.88rem;font-weight:500;padding:8px 10px;border-radius:10px;background:var(--surface-2);border:2px solid var(--line)}
+.safety{margin-top:16px;font-size:.88rem;color:var(--muted)}
+
+/* level 4: patroonkaarten */
+.deck{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px}
+.pcard{border:3px solid var(--line);border-radius:20px;background:var(--surface);box-shadow:5px 5px 0 var(--shadow);display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.pcard.flip{animation:flip .4s}
+@keyframes flip{50%{transform:rotateY(80deg)}}
+.pfront{background:var(--pc);color:var(--note-ink);padding:18px;min-height:210px;display:flex;flex-direction:column;gap:8px;position:relative}
+.pfront .kind{font-size:.72rem;text-transform:uppercase;letter-spacing:.14em;font-weight:700}
+.pfront h3{font-size:1.9rem}
+.pfront .shape{position:absolute;right:14px;bottom:14px;width:62px;height:62px;opacity:.9}
+.pfront .brands{font-size:.88rem;font-weight:500;max-width:70%}
+.pback{padding:16px;display:flex;flex-direction:column;gap:10px;font-size:.92rem}
+.pback .rq{font-weight:700}
+.pfoot{padding:0 16px 16px;margin-top:auto;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.got{font-family:var(--f-display);color:var(--good);letter-spacing:.03em}
+
+/* level 5 */
+.pitch{background:var(--surface);border:3px solid var(--line);border-radius:22px;box-shadow:6px 6px 0 var(--shadow);padding:22px;max-width:760px;font-size:1.12rem;line-height:1.7}
+.pitch p+p{margin-top:8px}
+.pitch mark{background:var(--note-klant);color:var(--note-ink);padding:0 4px;border-radius:4px}
+.pitch mark.geld{background:var(--note-geld)}.pitch mark.achter{background:var(--note-achter)}
+.pitch .gap{background:transparent;border:2px dashed var(--bad);color:var(--bad);border-radius:6px;padding:0 6px;cursor:pointer;font-size:.9rem;font-weight:700}
+.stage{display:flex;gap:18px;align-items:center;flex-wrap:wrap;margin-top:20px}
+.clock{font-family:var(--f-display);font-size:3.2rem;font-variant-numeric:tabular-nums;background:var(--ink);color:var(--bg);border:3px solid var(--line);border-radius:18px;padding:4px 20px;min-width:150px;text-align:center}
+.clock.hot{background:var(--tomato);color:#fff}
+
+.back{margin-bottom:16px}
+footer{max-width:1120px;margin:40px auto 0;font-size:.8rem;color:var(--muted)}
+footer a{color:inherit}
+
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:60;background:var(--ink);color:var(--bg);font-family:var(--f-display);font-size:1.15rem;letter-spacing:.02em;border-radius:999px;padding:8px 20px;border:3px solid var(--line);box-shadow:4px 4px 0 var(--shadow);animation:toast .3s cubic-bezier(.3,1.5,.6,1);white-space:nowrap}
+#toast span{color:var(--sun)}
+@keyframes toast{from{transform:translate(-50%,30px);opacity:0}}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:70;width:100%;height:100%}
+
+@media (max-width:900px){
+  .map{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .map li:nth-child(even){margin-top:0}
+  .map::before{display:none}
+  .meter{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .meter .out{grid-column:1/-1}
+}
+@media (max-width:760px){
+  .hero{grid-template-columns:1fr}
+  .bmc{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-areas:"kl kl" "wa wa" "ka re" "in in" "mi ac" "pa pa" "ko ko"}
+  .blk{min-height:110px}
+  .missions{grid-template-columns:1fr}
+  .xp{justify-content:flex-start}
+}
+@media (max-width:520px){
+  .map{grid-template-columns:1fr}
+  .meter{grid-template-columns:1fr 1fr}
+  .addform{flex-direction:column}
+  .overlay{place-items:end center;padding:0}
+  .sheet{border-radius:22px 22px 0 0;max-height:88%;padding-bottom:env(safe-area-inset-bottom,0px)}
+}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<header class="top">
+  <button class="logo" data-act="go" data-v="kaart" aria-label="Go to the level map">
+    <span class="mark"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19l5-5M13 4l7 7-5 2-4 4-2-2 4-4z"/></svg></span>
+    Startup<span class="q">Quest</span>
+  </button>
+  <div class="xp">
+    <a class="lang" href="https://claude.ai/artifact/K6t3pWdKBawC2v5fGu2Tik" lang="nl" title="Nederlandse versie">NL</a>
+    <span class="rank" id="rank">Starter</span>
+    <div class="bar" role="progressbar" aria-label="XP to next rank" id="bar"><i id="barfill"></i></div>
+    <span class="xpnum" id="xpnum">0 XP</span>
+  </div>
+</header>
+
+<main class="wrap" id="view"></main>
+
+<footer>
+  Based on the Business Model Canvas from <i>Business Model Generation</i> (Osterwalder &amp; Pigneur), canvas by Strategyzer under licence CC BY-SA 3.0. All texts in this app are original adaptations for ages 12–16. Your progress is stored only in this browser.
+</footer>
+
+<div id="modal" hidden></div>
+<div id="toast" hidden></div>
+<canvas id="confetti" aria-hidden="true"></canvas>
+
+<script>
+/* ---------- content ---------- */
+const BLOCKS = {
+  klanten:{name:'Customers',q:'Who is it for?',g:'klant',a:'kl',
+    uitleg:'You can\'t make everyone happy at once. Pick the group of people who need your product the most. Sometimes you have two groups, like players and advertisers.',
+    tip:'The more specific, the better. Not "everyone", but "younger students who find maths hard".'},
+  waarde:{name:'Value',q:'What problem do you solve?',g:'klant',a:'wa',
+    uitleg:'The heart of your business. Why would someone pick you instead of someone else? What becomes better, easier, faster or more fun?',
+    tip:'Finish the sentence: "Thanks to me, my customer no longer has to..."'},
+  kanalen:{name:'Channels',q:'How do they find you?',g:'klant',a:'ka',
+    uitleg:'The ways customers hear about you, buy from you and get their stuff.',
+    tip:'Word of mouth, a flyer, TikTok, a market stall, the school newsletter.'},
+  relatie:{name:'Relationships',q:'How do you keep them happy?',g:'klant',a:'re',
+    uitleg:'Finding a new customer is hard. How do you make sure customers come back and tell their friends about you?',
+    tip:'Personal contact, a loyalty card, fast replies, a group chat or Discord.'},
+  inkomsten:{name:'Revenue',q:'How do you make money?',g:'geld',a:'in',
+    uitleg:'How does money come in? Per sale, per month, through ads, through extras?',
+    tip:'Per item, a subscription, a bundle deal, or free with paid extras.'},
+  middelen:{name:'Resources',q:'What do you need?',g:'achter',a:'mi',
+    uitleg:'Things, knowledge and people your business can\'t exist without.',
+    tip:'Things (a laptop), knowledge (good at maths), people (a friend who can draw).'},
+  activiteiten:{name:'Activities',q:'What do you do all day?',g:'achter',a:'ac',
+    uitleg:'The most important things you have to actually do to keep your business running.',
+    tip:'Use verbs: make, deliver, explain, film, post.'},
+  partners:{name:'Partners',q:'Who helps you?',g:'achter',a:'pa',
+    uitleg:'Nobody does everything alone. Partners are people or companies that help you, so you can focus on what you do best.',
+    tip:'Think of family, school, a local shop or an app you use.'},
+  kosten:{name:'Costs',q:'What does it cost?',g:'geld',a:'ko',
+    uitleg:'Everything you spend money (or time) on to keep your business running.',
+    tip:'Materials, travel, a subscription. And don\'t forget your own time.'},
+};
+const ORDER = ['klanten','waarde','kanalen','relatie','inkomsten','middelen','activiteiten','partners','kosten'];
+const GROUPNAME = {klant:'Customer side',achter:'Behind the scenes',geld:'Money'};
+
+const EXAMPLE = {
+  klanten:['Younger students who find maths hard','Their parents (who pay)'],
+  waarde:['Better grades','Explanations in their own words, from someone who just did it'],
+  kanalen:['Flyer in the school library','Parents share it in the class group chat'],
+  relatie:['A message with 3 tips after every lesson'],
+  inkomsten:['€10 per hour','Bundle: 5 lessons for €45'],
+  middelen:['Good at maths','Laptop','A quiet place to work'],
+  activiteiten:['Preparing lessons','Explaining and practising'],
+  partners:['Form tutor at school','Library as a workspace'],
+  kosten:['Printouts','Travel time','My own time'],
+};
+
+const BRANDS = {
+  roblox:{name:'Roblox',cards:{
+    klanten:'Kids and teens who want to play, and creators who build games',
+    waarde:'Millions of free games to play with your friends',
+    kanalen:'App stores, Xbox, PC and the website',
+    relatie:'Adding friends, chat, groups and events',
+    inkomsten:'Selling Robux and a Premium subscription',
+    middelen:'The platform, servers and Roblox Studio',
+    activiteiten:'Keeping the platform running and safe',
+    partners:'Game creators, brands like Nike, app stores',
+    kosten:'Servers, programmers, moderators and paying creators'}},
+  youtuber:{name:'Gaming YouTuber',cards:{
+    klanten:'Viewers who love Minecraft videos, and advertisers',
+    waarde:'Funny, exciting videos every week',
+    kanalen:'YouTube videos and short clips on TikTok',
+    relatie:'Replying to comments and running a Discord server',
+    inkomsten:'Ads, merch and sponsorship deals',
+    middelen:'Camera, microphone, editing software and a sense of humour',
+    activiteiten:'Recording, editing, uploading',
+    partners:'YouTube itself, sponsors and a video editor',
+    kosten:'Equipment, paying the editor and loads of time'}},
+  spotify:{name:'Spotify',cards:{
+    klanten:'Music lovers, plus artists and advertisers',
+    waarde:'Almost all the music in the world, anytime, anywhere',
+    kanalen:'App on phone, laptop, speakers and in the car',
+    relatie:'Playlists made just for you, and Wrapped at the end of the year',
+    inkomsten:'Premium subscriptions and ads for free users',
+    middelen:'A giant music library and smart recommendations',
+    activiteiten:'Improving the app and making deals with record labels',
+    partners:'Record labels, artists and phone makers',
+    kosten:'Paying artists and labels, servers and programmers'}},
+};
+
+const PATTERNS = [
+  {k:'freemium',name:'Freemium',kind:'Recipe 1',c:'var(--sun)',
+   line:'Start free, pay for extras.',
+   brands:'Fortnite, Spotify, Duolingo',
+   uitleg:'Most people use it for free. A smaller group pays for something extra: skins, no ads, more lives. Those paying users keep the whole business going.',
+   rq:'What could you give away for free, and what would people pay extra for?',
+   shape:'<circle cx="31" cy="31" r="26" fill="none" stroke="currentColor" stroke-width="5"/><path d="M31 14v34M22 22h13a6 6 0 0 1 0 12h-8a6 6 0 0 0 0 12h13" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>'},
+  {k:'platform',name:'Platform',kind:'Recipe 2',c:'var(--klant)',
+   line:'Bring two groups together.',
+   brands:'Roblox (players + creators), Vinted (sellers + buyers), YouTube',
+   uitleg:'You don\'t make the product yourself. You build the place where two groups find each other. The more people from one group, the more interesting it gets for the other.',
+   rq:'Which two groups could you connect with each other?',
+   shape:'<circle cx="16" cy="31" r="11" fill="none" stroke="currentColor" stroke-width="5"/><circle cx="46" cy="31" r="11" fill="none" stroke="currentColor" stroke-width="5"/><path d="M27 31h8" stroke="currentColor" stroke-width="5"/>'},
+  {k:'longtail',name:'Long Tail',kind:'Recipe 3',c:'var(--achter)',
+   line:'Lots of tiny niches.',
+   brands:'Etsy, Amazon sellers, print-on-demand shops',
+   uitleg:'Not a few hits for everyone, but thousands of special things for small groups of fans. Each item sells only a little, but together they sell a lot.',
+   rq:'For which small group of fans could you make something really special?',
+   shape:'<path d="M6 8v48h50" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><path d="M12 14c6 28 18 34 42 36" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>'},
+  {k:'ontbundel',name:'Unbundling',kind:'Recipe 4',c:'var(--geld)',
+   line:'Do one thing really well.',
+   brands:'Uber Eats (only delivery), a burger stand that only makes the best burgers',
+   uitleg:'Big companies often do everything at once. Smart companies pick one piece and become the very best at it. They leave the rest to others.',
+   rq:'Which part of your idea are you best at? What could you leave to others?',
+   shape:'<rect x="6" y="6" width="22" height="22" rx="4" fill="none" stroke="currentColor" stroke-width="5"/><rect x="34" y="6" width="22" height="22" rx="4" fill="currentColor"/><rect x="6" y="34" width="22" height="22" rx="4" fill="none" stroke="currentColor" stroke-width="5"/><rect x="34" y="34" width="22" height="22" rx="4" fill="none" stroke="currentColor" stroke-width="5"/>'},
+  {k:'open',name:'Open',kind:'Recipe 5',c:'#C9A7FF',
+   line:'Let others join in.',
+   brands:'LEGO Ideas, Minecraft mods, Wikipedia',
+   uitleg:'You don\'t have to come up with every good idea yourself. Let fans, customers or other companies help build it, and everyone wins.',
+   rq:'How could your customers or fans help make your product better?',
+   shape:'<path d="M31 6v50M6 31h50M13 13l36 36M49 13L13 49" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>'},
+];
+
+const LEVELS = [
+  {id:'l1',t:'Crack a brand',s:'How does Roblox actually make money? Solve the puzzle.',icon:'search',c:'var(--sun)'},
+  {id:'l2',t:'Your idea',s:'Fill in your own business plan, box by box.',icon:'bulb',c:'var(--klant)'},
+  {id:'l3',t:'Test it for real',s:'Missions outside the app: talk to real customers.',icon:'chat',c:'var(--achter)'},
+  {id:'l4',t:'Secret recipes',s:'Collect the 5 tricks big companies use.',icon:'cards',c:'var(--geld)'},
+  {id:'l5',t:'Pitch!',s:'Explain your plan in 60 seconds.',icon:'mega',c:'#C9A7FF'},
+];
+const ICONS = {
+  search:'<circle cx="10" cy="10" r="6"/><path d="M15 15l5 5"/>',
+  bulb:'<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"/>',
+  chat:'<path d="M4 5h16v11H10l-5 4v-4H4z"/><path d="M8 10h8"/>',
+  cards:'<rect x="3" y="7" width="12" height="14" rx="2"/><path d="M8 3h11a2 2 0 0 1 2 2v12"/>',
+  mega:'<path d="M3 10v4h4l8 5V5L7 10z"/><path d="M18 9a4 4 0 0 1 0 6"/>',
+  check:'<path d="M4 12l5 5L20 6"/>',
+};
+const icon = (n,sw=2.5) => `<svg viewBox="0 0 24 24" fill="none" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round">${ICONS[n]}</svg>`;
+const RANKS = [{n:'Starter',x:0},{n:'Thinker',x:80},{n:'Builder',x:200},{n:'Entrepreneur',x:360},{n:'Boss',x:550}];
+
+/* ---------- state ---------- */
+const KEY = 'startup-quest-en-v1';
+const clone = o => JSON.parse(JSON.stringify(o));
+function fresh(){
+  return {view:'kaart',xp:0,awarded:{},idea:'Maths tutoring for younger students',isExample:true,canvas:clone(EXAMPLE),
+    money:{prijs:10,aantal:6,kosten:15},l1brand:'roblox',l1:{roblox:{},youtuber:{},spotify:{}},
+    mis:{ja:0,nee:0,prijs:'',r1:'',r2:'',verras:''},pat:{},patDraft:{},practiced:false};
+}
+let S;
+try { S = Object.assign(fresh(), JSON.parse(localStorage.getItem(KEY)) || {}); } catch(e){ S = fresh(); }
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+/* ---------- XP and feedback ---------- */
+function award(key, n, msg){
+  if (S.awarded[key]) return false;
+  S.awarded[key] = true; S.xp += n; save(); header();
+  toast(`<span>+${n} XP</span> ${esc(msg||'')}`);
+  return true;
+}
+let toastT;
+function toast(html){
+  const t = document.getElementById('toast');
+  t.innerHTML = html; t.hidden = false;
+  t.style.animation='none'; t.offsetHeight; t.style.animation='';
+  clearTimeout(toastT); toastT = setTimeout(()=>t.hidden=true, 2200);
+}
+function header(){
+  let i = RANKS.length-1; while (i>0 && S.xp < RANKS[i].x) i--;
+  const cur = RANKS[i], next = RANKS[i+1];
+  document.getElementById('rank').textContent = cur.n;
+  const pct = next ? (S.xp-cur.x)/(next.x-cur.x)*100 : 100;
+  document.getElementById('barfill').style.width = Math.min(100,pct)+'%';
+  document.getElementById('bar').setAttribute('aria-valuenow', Math.round(pct));
+  document.getElementById('xpnum').textContent = next ? `${S.xp} / ${next.x} XP` : `${S.xp} XP`;
+}
+function rankIndex(){ let i = RANKS.length-1; while (i>0 && S.xp < RANKS[i].x) i--; return i; }
+
+/* ---------- progress per level ---------- */
+const filled = () => ORDER.filter(k => S.canvas[k] && S.canvas[k].length).length;
+function prog(id){
+  if (id==='l1') return {n:Object.keys(BRANDS).filter(b=>Object.keys(S.l1[b]||{}).length===9).length,of:3,u:'brands'};
+  if (id==='l2') return {n:S.isExample?0:filled(),of:9,u:'boxes'};
+  if (id==='l3') return {n:misDone().length,of:4,u:'missions'};
+  if (id==='l4') return {n:Object.keys(S.pat).length,of:5,u:'cards'};
+  return {n:S.practiced?1:0,of:1,u:'pitch'};
+}
+function misDone(){
+  const d=[]; const m=S.mis;
+  if (m.ja+m.nee>=5) d.push('interview');
+  if (Number(m.prijs)>0) d.push('prijs');
+  if (m.r1.trim() && m.r2.trim()) d.push('rivalen');
+  if (m.verras.trim().length>=10) d.push('verras');
+  return d;
+}
+
+/* ---------- views ---------- */
+const view = document.getElementById('view');
+function render(){
+  const v = S.view;
+  view.innerHTML = v==='kaart' ? vMap() : lvWrap(v);
+  if (v==='l2') meterOut();
+}
+
+function vMap(){
+  const ri = rankIndex();
+  return `
+  <section class="hero">
+    <div>
+      <p class="eyebrow">For future founders aged 12 to 16</p>
+      <h1>Become the <em>boss</em> of your own business.</h1>
+      <p class="lead">Real entrepreneurs draw their plan on one sheet with 9 boxes: the Business Model Canvas. Here you learn it in 5 levels. First you see how big brands do it, then you build your own business.</p>
+    </div>
+    <div class="ticket">
+      <p class="eyebrow">Your rank</p>
+      <h3>${RANKS[ri].n}</h3>
+      <div class="row"><span class="big">${S.xp}</span><small>${RANKS[ri+1] ? `${RANKS[ri+1].x - S.xp} XP to ${RANKS[ri+1].n}` : 'Top rank reached!'}</small></div>
+      <div class="ranks">${RANKS.map((r,i)=>`<span class="${i<=ri?'on':''}">${r.n}</span>`).join('')}</div>
+    </div>
+  </section>
+  <ol class="map">
+    ${LEVELS.map((L,i)=>{ const p=prog(L.id); const done=p.n>=p.of;
+      return `<li><button class="node" data-act="go" data-v="${L.id}" style="--c:${L.c}">
+        <span class="disc">${icon(L.icon)}<span class="num">${i+1}</span></span>
+        <h3>${L.t}</h3><p>${L.s}</p>
+        <span class="pill ${done?'done':''}">${done?'Completed':`${p.n} / ${p.of} ${p.u}`}</span>
+      </button></li>`;}).join('')}
+  </ol>`;
+}
+
+function lvWrap(id){
+  const i = LEVELS.findIndex(l=>l.id===id), L = LEVELS[i];
+  const body = {l1:vL1,l2:vL2,l3:vL3,l4:vL4,l5:vL5}[id]();
+  const next = LEVELS[i+1];
+  return `
+  <button class="btn ghost sm back" data-act="go" data-v="kaart">&larr; Back to the map</button>
+  <div class="lvhead">
+    <span class="disc" style="--c:${L.c}">${icon(L.icon)}</span>
+    <div class="grow"><p class="eyebrow">Level ${i+1} of 5</p><h1>${L.t}</h1></div>
+    ${next ? `<button class="btn sm" data-act="go" data-v="${next.id}">Level ${i+2} &rarr;</button>` : ''}
+  </div>
+  ${body}`;
+}
+
+function blockHTML(k, notes, extra=''){
+  const B = BLOCKS[k];
+  return `<button class="blk ${extra}" style="--a:${B.a}" data-g="${B.g}" data-k="${k}" data-act="blk">
+    <span class="hd"><b>${B.name}</b>${notes.length?`<span class="cnt">${notes.length}</span>`:''}</span>
+    <span class="bd">
+      <span class="qq">${B.q}</span>
+      ${notes.map(n=>`<span class="note">${esc(n)}</span>`).join('')}
+    </span></button>`;
+}
+const legend = () => `<div class="legend"><span><i style="background:var(--klant)"></i>Customer side: who, what and how</span><span><i style="background:var(--achter)"></i>Behind the scenes: what you need</span><span><i style="background:var(--geld)"></i>Money: in and out</span></div>`;
+
+/* level 1 */
+let sel = null, fb = {t:'',c:''};
+const SHUF = {};
+function shuffled(b){ if(!SHUF[b]){ SHUF[b]=ORDER.slice().sort(()=>Math.random()-.5); } return SHUF[b]; }
+function vL1(){
+  const b = S.l1brand, brand = BRANDS[b], placed = S.l1[b];
+  const left = shuffled(b).filter(k=>!placed[k]);
+  const done = left.length===0;
+  const nextBrand = Object.keys(BRANDS).find(k=>Object.keys(S.l1[k]).length<9);
+  return `
+  <p class="intro"><b>How it works:</b> every business fits into the same 9 boxes. Tap a card with a fact about the brand, then tap the box where it belongs.</p>
+  <div class="chips" role="group" aria-label="Pick a brand">
+    ${Object.entries(BRANDS).map(([key,v])=>{ const ok=Object.keys(S.l1[key]).length===9;
+      return `<button class="chip" data-act="brand" data-v="${key}" aria-pressed="${key===b}">${ok?`<span class="ok">${icon('check',4)}</span>`:''}${v.name}</button>`;}).join('')}
+  </div>
+  ${legend()}
+  <div class="bmc">${ORDER.map(k=>blockHTML(k, placed[k]?[brand.cards[k]]:[], sel?'target':'')).join('')}</div>
+  ${done ? `<div class="win"><div><h3>${brand.name} cracked!</h3><p>Now you get how ${brand.name} works. Notice how they often have two kinds of customers?</p></div>
+      ${nextBrand ? `<button class="btn" data-act="brand" data-v="${nextBrand}">Next brand</button>` : `<button class="btn" data-act="go" data-v="l2">Now your own idea &rarr;</button>`}</div>`
+  : `<div class="tray"><h3>Cards about ${brand.name} (${left.length} left)</h3>
+      <div class="cards">${left.map(k=>`<button class="card" data-act="pick" data-v="${k}" aria-pressed="${sel===k}">${esc(brand.cards[k])}</button>`).join('')}</div>
+      <p class="feedback ${fb.c}" aria-live="polite">${fb.t}</p></div>`}`;
+}
+
+/* level 2 */
+let resetArm = false;
+function vL2(){
+  const n = filled();
+  return `
+  ${S.isExample ? `<div class="banner"><p><b>This is an example</b> of a small business a student could start. Have a look around, then start your own idea.</p>
+     ${resetArm ? `<button class="btn red" data-act="reset">Yes, clear everything</button><button class="btn ghost" data-act="unarm">No, keep it</button>` : `<button class="btn" data-act="arm">Start my own idea</button>`}</div>`
+   : `<p class="intro"><b>Tip from real entrepreneurs:</b> start on the right with your customers and what you solve for them. Only then look at what you need. Tap a box to add sticky notes.</p>`}
+  <div class="namebox"><label for="idea">My business:</label><input class="field" id="idea" data-bind="idea" maxlength="60" placeholder="For example: Custom sneaker designs" value="${esc(S.idea)}"><span class="pill ${n===9&&!S.isExample?'done':''}">${n} / 9 boxes</span></div>
+  ${legend()}
+  <div class="bmc">${ORDER.map(k=>blockHTML(k, S.canvas[k]||[])).join('')}</div>
+  <section class="meter" aria-labelledby="mh">
+    <h3 id="mh">Money meter: is anything left over?</h3>
+    <label for="m-prijs">Price per sale (€)<input class="field" type="number" min="0" step="0.5" id="m-prijs" data-m="prijs" value="${S.money.prijs}"></label>
+    <label for="m-aantal">Sales per month<input class="field" type="number" min="0" id="m-aantal" data-m="aantal" value="${S.money.aantal}"></label>
+    <label for="m-kosten">Costs per month (€)<input class="field" type="number" min="0" step="0.5" id="m-kosten" data-m="kosten" value="${S.money.kosten}"></label>
+    <div class="out" id="m-out"></div>
+  </section>`;
+}
+function meterOut(){
+  const m = S.money, inn = (+m.prijs||0)*(+m.aantal||0), w = inn-(+m.kosten||0);
+  const o = document.getElementById('m-out'); if(!o) return;
+  o.className = 'out'+(w<0?' neg':'');
+  o.innerHTML = `<small>Profit per month</small><b>€ ${w.toFixed(2)}</b><small>${w<0?'You\'re losing money. Higher price, more customers or lower costs?':w===0?'Exactly break-even. Nothing left yet.':`That\'s about € ${Math.round(w*12)} per year.`}</small>`;
+}
+
+/* editor */
+let edK = null;
+function openEd(k){
+  edK = k; const B = BLOCKS[k], notes = S.canvas[k]||[], i = ORDER.indexOf(k);
+  const ex = EXAMPLE[k][0];
+  const m = document.getElementById('modal');
+  m.innerHTML = `<div class="overlay" data-act="close-bg"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="edt" style="--g:var(--${B.g})">
+    <div class="sh"><div><p class="tag">${GROUPNAME[B.g]} · box ${i+1} of 9</p><h2 id="edt">${B.name}</h2><p class="q">${B.q}</p></div><button class="x" data-act="close" aria-label="Close">&times;</button></div>
+    <div class="sb">
+      <p>${B.uitleg}</p>
+      <div class="tip"><b>Tip</b>${B.tip}<br><b>Example</b>"${esc(ex)}" (for maths tutoring)</div>
+      <div class="elist">${notes.length ? notes.map((n,j)=>`<span class="note" style="--n:var(--note-${B.g})">${esc(n)}<button data-act="del" data-v="${j}" aria-label="Remove ${esc(n)}">&times;</button></span>`).join('') : `<p class="empty">No sticky notes yet. Write one below.</p>`}</div>
+      <form class="addform" id="addform"><input class="field" id="noteinput" maxlength="80" autocomplete="off" placeholder="Keep it short, max 80 characters" aria-label="New sticky note"><button class="btn" type="submit">Stick it on</button></form>
+    </div>
+    <div class="snav">
+      <button class="btn ghost sm" data-act="ed" data-v="${ORDER[(i+8)%9]}">&larr; ${BLOCKS[ORDER[(i+8)%9]].name}</button>
+      <button class="btn sm" data-act="ed" data-v="${ORDER[(i+1)%9]}">${BLOCKS[ORDER[(i+1)%9]].name} &rarr;</button>
+    </div></div></div>`;
+  m.hidden = false;
+  setTimeout(()=>{ const f=document.getElementById('noteinput'); f && f.focus(); }, 30);
+}
+function closeEd(){ document.getElementById('modal').hidden = true; edK = null; render(); }
+
+/* level 3 */
+function vL3(){
+  const d = misDone(), m = S.mis;
+  const st = k => d.includes(k) ? '<span class="stamp">DONE</span>' : '';
+  const tot = m.ja+m.nee;
+  let ih = '';
+  if (tot>=5) ih = m.ja>=m.nee ? 'Good sign! Most people like it. Also ask them what would make it even better.' : 'Lots of no\'s? No problem. Ask them why, and change your idea. Real entrepreneurs do that too, it\'s called pivoting.';
+  const pr = Number(m.prijs), mine = Number(S.money.prijs);
+  let ph = '';
+  if (pr>0) ph = pr>=mine ? `On average they\'d pay € ${pr}, and you charge € ${mine}. Maybe you can even charge a bit more.` : `They\'d pay € ${pr}, but you charge € ${mine}. Can you work cheaper, or offer more value?`;
+  return `
+  <p class="intro"><b>Making a plan is step one.</b> Real entrepreneurs go outside to check if their idea works, before they spend any money. Do these missions for real and fill in what you find out.</p>
+  <div class="missions">
+    <article class="mis ${d.includes('interview')?'done':''}">${st('interview')}
+      <h3>Ask 5 people: would you buy this?</h3>
+      <p>Explain "${esc(S.idea||'your idea')}" in one sentence. Then keep score of the answers.</p>
+      <div class="tally">
+        <button class="btn green sm" data-act="tally" data-v="ja">+ Yes</button><span class="t" aria-label="Yes">${m.ja}</span>
+        <button class="btn red sm" data-act="tally" data-v="nee">+ No</button><span class="t" aria-label="No">${m.nee}</span>
+        <button class="btn ghost sm" data-act="tally" data-v="undo">Reset</button>
+      </div>
+      ${ih?`<p class="hint">${ih}</p>`:`<p class="hint">${Math.max(0,5-tot)} to go.</p>`}
+    </article>
+    <article class="mis ${d.includes('prijs')?'done':''}">${st('prijs')}
+      <h3>What would they pay?</h3>
+      <p>Don't ask "is €10 okay?", because then everyone says yes. Ask: "What would you pay for it?" Fill in the average.</p>
+      <label for="mis-prijs" class="eyebrow" style="margin:0">Average amount (€)</label>
+      <input class="field" type="number" min="0" step="0.5" id="mis-prijs" data-mis="prijs" value="${esc(m.prijs)}">
+      ${ph?`<p class="hint">${ph}</p>`:''}
+    </article>
+    <article class="mis ${d.includes('rivalen')?'done':''}">${st('rivalen')}
+      <h3>Find 2 competitors</h3>
+      <p>Who already does something like your idea? What do they do well, and what could you do better?</p>
+      <input class="field" id="mis-r1" data-mis="r1" maxlength="80" placeholder="Competitor 1, and what they do well" value="${esc(m.r1)}" aria-label="Competitor 1">
+      <input class="field" id="mis-r2" data-mis="r2" maxlength="80" placeholder="Competitor 2, and what they do well" value="${esc(m.r2)}" aria-label="Competitor 2">
+    </article>
+    <article class="mis ${d.includes('verras')?'done':''}">${st('verras')}
+      <h3>What surprised you?</h3>
+      <p>Write down something someone said that you never thought of. Should you change a box on your canvas?</p>
+      <textarea class="field" id="mis-verras" data-mis="verras" rows="3" maxlength="300" aria-label="What surprised you">${esc(m.verras)}</textarea>
+    </article>
+  </div>
+  <p class="safety">Stay safe: talk to people you know, like classmates, family or neighbours. Want to talk to strangers? Bring a parent or teacher along.</p>`;
+}
+
+/* level 4 */
+const flipped = new Set();
+function vL4(){
+  return `
+  <p class="intro"><b>Big companies often use the same recipe.</b> Flip a card, read the secret, and think of how you would use it. Then the card is yours.</p>
+  <div class="deck">${PATTERNS.map(p=>{ const got=S.pat[p.k], open=flipped.has(p.k)||got; const dr=S.patDraft[p.k]||got||'';
+    return `<article class="pcard" id="pc-${p.k}">
+      <div class="pfront" style="--pc:${p.c}"><span class="kind">${p.kind}</span><h3>${p.name}</h3><p><b>${p.line}</b></p><p class="brands">${p.brands}</p><svg class="shape" viewBox="0 0 62 62" aria-hidden="true">${p.shape}</svg></div>
+      ${open ? `<div class="pback"><p>${p.uitleg}</p><p class="rq">${p.rq}</p>
+        ${got ? `<p class="note" style="--n:var(--note-geld)">${esc(got)}</p>` : `<textarea class="field" rows="3" maxlength="200" id="pd-${p.k}" data-pat="${p.k}" aria-label="${esc(p.rq)}" placeholder="My idea...">${esc(dr)}</textarea>`}</div>
+        <div class="pfoot">${got ? `<span class="got">Collected</span>` : `<button class="btn sm" data-act="earn" data-v="${p.k}" id="pe-${p.k}" ${dr.trim().length<10?'disabled':''}>Earn this card</button>`}</div>`
+      : `<div class="pfoot" style="padding-top:16px"><button class="btn ghost sm" data-act="flip" data-v="${p.k}">Flip it</button></div>`}
+    </article>`;}).join('')}</div>`;
+}
+
+/* level 5 */
+let timer = {left:60,id:null,ran:false};
+function vL5(){
+  const c = S.canvas;
+  const part = (k,cls='') => (c[k]&&c[k].length)
+    ? `<mark class="${cls}">${esc(c[k].join(' and ').replace(/^./,ch=>ch.toLowerCase()))}</mark>`
+    : `<button class="gap" data-act="go-ed" data-v="${k}">fill in "${BLOCKS[k].name}"</button>`;
+  return `
+  <p class="intro"><b>A pitch is your plan in a few sentences.</b> We built it from your canvas. Read it out loud. Can you do it in 60 seconds without peeking?</p>
+  ${S.isExample?`<p class="intro">You're seeing the pitch for the example. Start your own idea in level 2 to get your own pitch.</p>`:''}
+  <div class="pitch" id="pitchtext">
+    <p>Hi! My business is called <b>${esc(S.idea||'...')}</b>.</p>
+    <p>I help ${part('klanten')}.</p>
+    <p>What I do for them: ${part('waarde')}.</p>
+    <p>They find me through ${part('kanalen')}, and I keep them happy with ${part('relatie')}.</p>
+    <p>I make money with ${part('inkomsten','geld')}. My costs are ${part('kosten','geld')}.</p>
+    <p>I get help from ${part('partners','achter')}.</p>
+  </div>
+  <div class="stage">
+    <div class="clock ${timer.left<=10&&timer.id?'hot':''}" id="clock" aria-live="off">0:${String(timer.left).padStart(2,'0')}</div>
+    <button class="btn" data-act="timer">${timer.id?'Stop':'Start the clock'}</button>
+    <button class="btn ghost" data-act="copy">Copy pitch</button>
+    ${S.practiced ? `<span class="got">Pitch practised</span>` : `<button class="btn green" data-act="practiced" ${timer.ran?'':'disabled'}>I practised!</button>`}
+  </div>`;
+}
+function tick(){
+  timer.left--; const el=document.getElementById('clock');
+  if (el){ el.textContent='0:'+String(Math.max(0,timer.left)).padStart(2,'0'); el.classList.toggle('hot',timer.left<=10); }
+  if (timer.left<=0){ clearInterval(timer.id); timer.id=null; timer.ran=true; if(S.view==='l5') render(); toast('<span>Time!</span> How did it go?'); }
+}
+
+/* ---------- actions ---------- */
+const ACT = {
+  go(t){ S.view=t.dataset.v; sel=null; fb={t:'',c:''}; resetArm=false; save(); render(); window.scrollTo({top:0}); },
+  brand(t){ S.l1brand=t.dataset.v; sel=null; fb={t:'',c:''}; save(); render(); },
+  pick(t){ const k=t.dataset.v; sel = sel===k?null:k; fb={t:'',c:''}; render(); },
+  blk(t){
+    const k=t.dataset.k;
+    if (S.view==='l2') return openEd(k);
+    if (S.view!=='l1') return;
+    const b=S.l1brand;
+    if (!sel){ fb={t:'Pick a card below first.',c:''}; render(); return; }
+    if (sel===k){
+      S.l1[b][k]=true; sel=null; fb={t:`Yes! That belongs in ${BLOCKS[k].name}.`,c:'good'};
+      save(); render(); award(`l1-${b}-${k}`,5,BLOCKS[k].name);
+      document.querySelector(`.blk[data-k="${k}"]`)?.classList.add('pop');
+      if (Object.keys(S.l1[b]).length===9){ award(`l1-${b}`,30,`${BRANDS[b].name} cracked`); confetti(); render(); }
+    } else {
+      fb={t:`Not yet. This box asks: "${BLOCKS[k].q}" Does your card fit that?`,c:'bad'};
+      render(); document.querySelector(`.blk[data-k="${k}"]`)?.classList.add('shake');
+    }
+  },
+  ed(t){ openEd(t.dataset.v); },
+  'go-ed'(t){ S.view='l2'; save(); render(); openEd(t.dataset.v); },
+  close(){ closeEd(); },
+  'close-bg'(t,e){ if (e.target===t) closeEd(); },
+  del(t){ S.canvas[edK].splice(+t.dataset.v,1); save(); openEd(edK); },
+  arm(){ resetArm=true; render(); },
+  unarm(){ resetArm=false; render(); },
+  reset(){ S.canvas={}; ORDER.forEach(k=>S.canvas[k]=[]); S.idea=''; S.isExample=false; resetArm=false; save(); render(); toast('<span>Blank canvas!</span> Start with Customers.'); document.getElementById('idea')?.focus(); },
+  tally(t){ const v=t.dataset.v; if(v==='undo'){S.mis.ja=0;S.mis.nee=0;} else S.mis[v]++; save(); checkMis(); render(); },
+  flip(t){ flipped.add(t.dataset.v); render(); document.getElementById('pc-'+t.dataset.v)?.classList.add('flip'); setTimeout(()=>document.getElementById('pd-'+t.dataset.v)?.focus(),50); },
+  earn(t){ const k=t.dataset.v, v=(S.patDraft[k]||'').trim(); if(v.length<10) return; S.pat[k]=v; save(); award('pat-'+k,20,PATTERNS.find(p=>p.k===k).name+' collected'); if(Object.keys(S.pat).length===5) confetti(); render(); },
+  timer(){ if(timer.id){ clearInterval(timer.id); timer.id=null; timer.ran=true; } else { timer.left=60; timer.id=setInterval(tick,1000); } render(); },
+  practiced(){ S.practiced=true; save(); award('pitch',50,'Pitch practised'); confetti(); render(); },
+  copy(){
+    const txt = document.getElementById('pitchtext').innerText.replace(/fill in "[^"]+"/g,'...');
+    navigator.clipboard.writeText(txt).then(()=>toast('<span>Copied!</span>')).catch(()=>{
+      const r=document.createRange(); r.selectNodeContents(document.getElementById('pitchtext'));
+      const s=getSelection(); s.removeAllRanges(); s.addRange(r); toast('Text selected, copy with Ctrl+C');
+    });
+  },
+};
+function checkMis(){
+  const names={interview:'Interviews done',prijs:'Price checked',rivalen:'Competitors found',verras:'Insight noted'};
+  misDone().forEach(k=>{ if(award('mis-'+k,25,names[k]) && misDone().length===4) confetti(); });
+}
+
+document.addEventListener('click', e=>{
+  const t = e.target.closest('[data-act]'); if(!t) return;
+  const f = ACT[t.dataset.act]; if (f) f(t,e);
+});
+document.addEventListener('submit', e=>{
+  if (e.target.id!=='addform') return; e.preventDefault();
+  const inp=document.getElementById('noteinput'), v=inp.value.trim(); if(!v||!edK) return;
+  (S.canvas[edK] ||= []).push(v.slice(0,80)); save();
+  const k=edK; render(); openEd(k);
+  award('canvas-'+k,15,BLOCKS[k].name+' filled in');
+  if (!S.isExample && filled()===9) { award('canvas-all',40,'Canvas complete!'); confetti(); }
+});
+document.addEventListener('input', e=>{
+  const t=e.target;
+  if (t.dataset.bind==='idea'){ S.idea=t.value; save(); }
+  if (t.dataset.m){ S.money[t.dataset.m]=t.value; save(); meterOut(); award('meter',20,'Money meter used'); }
+  if (t.dataset.mis){ S.mis[t.dataset.mis]=t.value; save(); }
+  if (t.dataset.pat){ S.patDraft[t.dataset.pat]=t.value; save(); const b=document.getElementById('pe-'+t.dataset.pat); if(b) b.disabled = t.value.trim().length<10; }
+});
+document.addEventListener('change', e=>{
+  if (e.target.dataset.mis) setTimeout(()=>{ const id=document.activeElement && document.activeElement.id; checkMis(); render(); if(id) document.getElementById(id)?.focus(); },0);
+});
+document.addEventListener('keydown', e=>{ if(e.key==='Escape' && !document.getElementById('modal').hidden) closeEd(); });
+
+/* ---------- confetti ---------- */
+function confetti(){
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const cv=document.getElementById('confetti'), cx=cv.getContext('2d');
+  cv.width=innerWidth; cv.height=innerHeight;
+  const cols=['#FF5B3A','#FFC83D','#2CCB86','#3E95FF','#C9A7FF','#FF8FC1'];
+  const P=Array.from({length:120},()=>({x:innerWidth/2+(Math.random()-.5)*200,y:innerHeight*.35,vx:(Math.random()-.5)*14,vy:-Math.random()*14-4,s:6+Math.random()*7,r:Math.random()*6,vr:(Math.random()-.5)*.4,c:cols[Math.random()*cols.length|0]}));
+  let f=0;
+  (function step(){
+    cx.clearRect(0,0,cv.width,cv.height);
+    P.forEach(p=>{ p.vy+=.45; p.x+=p.vx; p.y+=p.vy; p.vx*=.99; p.r+=p.vr;
+      cx.save(); cx.translate(p.x,p.y); cx.rotate(p.r); cx.fillStyle=p.c; cx.fillRect(-p.s/2,-p.s/4,p.s,p.s/2); cx.restore(); });
+    if (++f<110) requestAnimationFrame(step); else cx.clearRect(0,0,cv.width,cv.height);
+  })();
+}
+
+header(); render();
+</script>
+
+</body></html>
